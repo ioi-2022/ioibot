@@ -1,8 +1,8 @@
 from nio import AsyncClient, MatrixRoom, RoomMessageText
 
-from my_project_name.chat_functions import react_to_event, send_text_to_room
-from my_project_name.config import Config
-from my_project_name.storage import Storage
+from ioibot_2022.chat_functions import react_to_event, send_text_to_room
+from ioibot_2022.config import Config
+from ioibot_2022.storage import Storage
 
 
 class Command:

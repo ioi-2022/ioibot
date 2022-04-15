@@ -20,12 +20,12 @@ def read_file(path_segments):
         return f.read()
 
 
-version = exec_file(("my_project_name", "__init__.py"))["__version__"]
+version = exec_file(("ioibot_2022", "__init__.py"))["__version__"]
 long_description = read_file(("README.md",))
 
 
 setup(
-    name="my-project-name",
+    name="ioibot-2022",
     version=version,
     url="https://github.com/anoadragon453/nio-template",
     description="A matrix bot to do amazing things!",
@@ -55,5 +55,5 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     # Allow the user to run the bot with `my-project-name ...`
-    scripts=["my-project-name"],
+    scripts=["ioibot-2022"],
 )
