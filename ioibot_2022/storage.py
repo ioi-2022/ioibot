@@ -1,5 +1,4 @@
 import logging
-import pandas
 from typing import Any, Dict
 
 # The latest migration version of the database.
@@ -13,8 +12,6 @@ latest_migration_version = 0
 
 logger = logging.getLogger(__name__)
 
-USER_URL = 'https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=718151077'
-TEAMS_URL = 'https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=0'
 
 class Storage:
     def __init__(self, database_config: Dict[str, str]):
@@ -32,14 +29,8 @@ class Storage:
         self.conn = self._get_database_connection(
             database_config["type"], database_config["connection_string"]
         )
-        self.vconn = self._get_database_connection(
-            'sqlite', 'vote.db'
-        )
         self.cursor = self.conn.cursor()
         self.db_type = database_config["type"]
-
-        self.users = pandas.read_csv(USER_URL)
-        self.teams = pandas.read_csv(TEAMS_URL)
 
         # Try to check the current migration version
         migration_level = 0
