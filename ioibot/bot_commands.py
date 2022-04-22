@@ -103,7 +103,7 @@ class Command:
         leaders = self.store.leaders
 
         response = f"""Team members from {teamcode}
-        ({teams.loc[teams['Code'] == teamcode, 'Name'].item()})"""
+        ({teams.loc[teams['Code'] == teamcode, 'Name'].item()}) :"""
 
         curteam = leaders.loc[leaders['TeamCode'] == teamcode]
 
