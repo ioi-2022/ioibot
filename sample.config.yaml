@@ -47,3 +47,7 @@ logging:
   console_logging:
     # Whether logging to the console is enabled
     enabled: true
+
+links:
+  #link1: "<link1>"
+  #link2 "<link2>"
