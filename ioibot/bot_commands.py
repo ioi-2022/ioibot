@@ -100,9 +100,16 @@ class Command:
             await send_text_to_room(self.client, self.room.room_id, text)
             return
 
-        teamcode = self.args[0]
+        teamcode = self.args[0].upper()
         teams = self.store.teams
         leaders = self.store.leaders
+
+        if teamcode not in teams['Code'].unique():
+            text = (
+                f"Team {teamcode} not found!"
+            )
+            await send_text_to_room(self.client, self.room.room_id, text)
+            return
 
         response = f"""Team members from {teamcode}
         ({teams.loc[teams['Code'] == teamcode, 'Name'].item()}):"""
