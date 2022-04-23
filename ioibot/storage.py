@@ -15,10 +15,6 @@ logger = logging.getLogger(__name__)
 
 from ioibot.config import Config
 
-# TEAM_URL = 'https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=0'
-# LEADER_URL = 'https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=718151077'
-# CONTESTANT_URL = 'https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=1740907177'
-
 class Storage:
     def __init__(self, database_config: Dict[str, str], config: Config):
         """Setup the database.

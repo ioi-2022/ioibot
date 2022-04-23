@@ -48,6 +48,8 @@ logging:
     # Whether logging to the console is enabled
     enabled: true
 
-links:
+datasource:
+  # Example of datasource
+  #TEAM_URL: "https://docs.google.com/spreadsheets/d/1yzW-gbkdU_JOBIRGA6eo0utytEPha8oChDiZ06Jz-dI/export?format=csv&gid=0"
   #link1: "<link1>"
   #link2 "<link2>"

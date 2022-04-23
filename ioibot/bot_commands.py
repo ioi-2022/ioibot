@@ -92,8 +92,10 @@ class Command:
         """Show team info"""
         if not self.args:
             text = (
-                "Hello, I am a bot made with matrix-nio! Use `info <team-code>` to view "
-                "team info"
+                "Usage:"
+                "  \n`info <3-letter-country-code>`: shows team members"
+                "  \n  \nExamples:"
+                "  \n- `info IDN`"
             )
             await send_text_to_room(self.client, self.room.room_id, text)
             return
@@ -103,7 +105,7 @@ class Command:
         leaders = self.store.leaders
 
         response = f"""Team members from {teamcode}
-        ({teams.loc[teams['Code'] == teamcode, 'Name'].item()})"""
+        ({teams.loc[teams['Code'] == teamcode, 'Name'].item()}):"""
 
         curteam = leaders.loc[leaders['TeamCode'] == teamcode]
 
@@ -113,12 +115,12 @@ class Command:
                 roles.append(row)
 
         for role in roles:
-          response += f"  \n  \n{role}:"
+          response += f"  \n  \n<b>{role}</b>:"
           for index, member in curteam.iterrows():
             if member['Role'] == role:
-              response += f"  \n- @{member['UserID']} ({member['Name']})"
+              response += f"  \n- @{member['UserID']}:matrix.ioi2022.id ({member['Name']})"
 
-        response += "  \n  \nContestants:"
+        response += "  \n  \n<b>Contestants:</b>"
         for index, row in self.store.contestants.iterrows():
             if row['ContestantCode'].startswith(teamcode):
                 response += f"  \n- {row['ContestantCode']} ({row['FirstName']} {row['LastName']})"
