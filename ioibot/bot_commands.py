@@ -118,7 +118,7 @@ class Command:
           response += f"  \n  \n<b>{role}</b>:"
           for index, member in curteam.iterrows():
             if member['Role'] == role:
-              response += f"  \n- @{member['UserID']}:matrix.ioi2022.id ({member['Name']})"
+              response += f"  \n- @{member['UserID']}:{self.config.homeserver_url[8:]} ({member['Name']})"
 
         response += "  \n  \n<b>Contestants:</b>"
         for index, row in self.store.contestants.iterrows():
