@@ -194,7 +194,7 @@ class Command:
                 '- `poll update <poll-id> "<question>" "<choices-separated-with-/>"`: update existing poll  \n'
                 '- `poll list`: show list of created polls  \n'
                 '- `poll activate <poll-id>`: activate a poll  \n'
-                '- `poll deactivate <poll-id>`: deactivate all poll  \n\n'
+                '- `poll deactivate <poll-id>`: deactivate all polls  \n\n'
 
                 "Examples:  \n\n"
                 '- `poll new "Is this a question?" "yes/no/abstain"`  \n'
@@ -220,11 +220,7 @@ class Command:
                 '''INSERT INTO polls (question, choices, active) VALUES (?, ?, 0)''',
                 [input_poll[0], input_poll[1]]
             )
-
-            cursor.execute(
-                '''SELECT MAX(poll_id) FROM polls'''
-            )
-            poll_id = cursor.fetchall()[0][0]
+            poll_id = cursor.lastrowid
 
             await send_text_to_room(
                 self.client, self.room.room_id,
@@ -404,7 +400,7 @@ class Command:
         choices  = active_poll[2].split('/')
 
         if not self.args:
-            text  = f"You  are voting on behalf of the {self.user.country} team.  \n\n"
+            text  = f"You are voting on behalf of the {self.user.country} team.  \n\n"
             text += f"Question: {question}  \n\n"
             text += "Vote by sending one of: \n\n"
             for choice in choices:
@@ -424,32 +420,15 @@ class Command:
             await send_text_to_room(self.client, self.room.room_id, text)
 
             cursor.execute(
-                '''SELECT poll_id FROM votes WHERE poll_id = ? AND team_code = ?''',
-                [poll_id, self.user.team]
+                '''
+                INSERT INTO votes (poll_id, team_code, choice, voted_by, voted_at)
+                VALUES (?, ?, ?, ?, datetime("now", "localtime"))
+                ON CONFLICT(poll_id, team_code) DO UPDATE
+                SET poll_id = ?, team_code = ?, choice = ?, voted_by = ?, voted_at = datetime("now", "localtime") 
+                ''',
+                [poll_id, self.user.team, self.args, self.user.username, \
+                 poll_id, self.user.team, self.args, self.user.username]
             )
-            vote_exist = cursor.fetchall()
-
-            if not vote_exist:
-                cursor.execute(
-                    '''
-                    INSERT INTO votes (poll_id, team_code, choice, voted_by, voted_on)
-                    VALUES (?, ?, ?, ?, datetime("now", "localtime"))
-                    ''',
-                    [poll_id, self.user.team, self.args, self.user.username]
-                )
-            else:
-                cursor.execute(
-                    '''
-                    UPDATE votes SET poll_id = ?,
-                                     team_code = ?,
-                                     choice = ?,
-                                     voted_by = ?,
-                                     voted_on = datetime("now", "localtime")
-                    WHERE poll_id = ? AND team_code = ?
-                    ''',
-                    [poll_id, self.user.team, self.args, self.user.username, \
-                     poll_id, self.user.team]
-                )
 
         else:
             text  = "Your vote is invalid.  \n\n"

@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('vote.db')
+conn = sqlite3.connect('ioibot.db')
 c = conn.cursor()
 
 c.execute(
@@ -21,7 +21,7 @@ c.execute(
 		team_code varchar NOT NULL,
 		choice varchar NOT NULL,
 		voted_by varchar NOT NULL,
-		voted_on date NOT NULL,
+		voted_at datetime NOT NULL,
 		UNIQUE(poll_id, team_code)
 	)
 	'''
