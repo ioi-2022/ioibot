@@ -419,10 +419,9 @@ class Command:
                 INSERT INTO votes (poll_id, team_code, choice, voted_by, voted_at)
                 VALUES (?, ?, ?, ?, datetime("now", "localtime"))
                 ON CONFLICT(poll_id, team_code) DO UPDATE
-                SET choice = excluded.choice, voted_by = ?, voted_at = datetime("now", "localtime") 
+                SET choice = excluded.choice, voted_by = excluded.voted_by, voted_at = datetime("now", "localtime") 
                 ''',
-                [poll_id, self.user.team, self.args, self.user.username, \
-                 self.user.username]
+                [poll_id, self.user.team, self.args, self.user.username]
             )
 
         else:
