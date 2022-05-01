@@ -258,22 +258,17 @@ class Command:
                 return
 
             cursor.execute(
-                '''SELECT poll_id FROM polls WHERE poll_id = ?''',
-                [poll_id]
+                '''UPDATE polls SET question = ?, choices = ? WHERE poll_id = ?''',
+                [input_poll[0], input_poll[1], poll_id]
             )
-            id_exist = cursor.fetchall()
-
+            id_exist = cursor.execute('''SELECT changes()''').fetchall()[0][0]
+            
             if not id_exist:
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Poll ID does not exist.  \n"
                 )
                 return
-
-            cursor.execute(
-                '''UPDATE polls SET question = ?, choices = ? WHERE poll_id = ?''',
-                [input_poll[0], input_poll[1], poll_id]
-            )
 
             await send_text_to_room(
                 self.client, self.room.room_id,
@@ -370,7 +365,7 @@ class Command:
 
             await send_text_to_room(
                 self.client, self.room.room_id,
-                "Poll deactivated.  \n"
+                "All polls deactivated.  \n"
             )
 
         else:
@@ -424,10 +419,10 @@ class Command:
                 INSERT INTO votes (poll_id, team_code, choice, voted_by, voted_at)
                 VALUES (?, ?, ?, ?, datetime("now", "localtime"))
                 ON CONFLICT(poll_id, team_code) DO UPDATE
-                SET poll_id = ?, team_code = ?, choice = ?, voted_by = ?, voted_at = datetime("now", "localtime") 
+                SET choice = excluded.choice, voted_by = ?, voted_at = datetime("now", "localtime") 
                 ''',
                 [poll_id, self.user.team, self.args, self.user.username, \
-                 poll_id, self.user.team, self.args, self.user.username]
+                 self.user.username]
             )
 
         else:
