@@ -88,7 +88,7 @@ class Command:
             await self._manage_poll()
 
         elif self.command.startswith("vote"):
-            if user.role not in ['Leader', 'Deputy Leader', 'HTC']:
+            if user.role not in ['Leader', 'Deputy Leader']:
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only Leader and Deputy Leader can use this command."
@@ -172,12 +172,12 @@ class Command:
                 roles.append(row)
 
         for role in roles:
-          response += f"  \n  \n<b>{role}</b>:"
+          response += f"  \n  \n{role}:"
           for index, member in curteam.iterrows():
             if member['Role'] == role:
               response += f"  \n- @{member['UserID']}:{self.config.homeserver_url[8:]} ({member['Name']})"
 
-        response += "  \n  \n<b>Contestants:</b>"
+        response += "  \n  \nContestants:"
         for index, row in self.store.contestants.iterrows():
             if row['ContestantCode'].startswith(teamcode):
                 response += f"  \n- {row['ContestantCode']} ({row['FirstName']} {row['LastName']})"
@@ -194,7 +194,7 @@ class Command:
                 '- `poll update <poll-id> "<question>" "<choices-separated-with-/>"`: update existing poll  \n'
                 '- `poll list`: show list of created polls  \n'
                 '- `poll activate <poll-id>`: activate a poll  \n'
-                '- `poll deactivate <poll-id>`: deactivate all polls  \n\n'
+                '- `poll deactivate`: deactivate all polls  \n\n'
 
                 "Examples:  \n\n"
                 '- `poll new "Is this a question?" "yes/no/abstain"`  \n'
@@ -266,7 +266,7 @@ class Command:
             if not id_exist:
                 await send_text_to_room(
                     self.client, self.room.room_id,
-                    "Poll ID does not exist.  \n"
+                    f"Poll {poll_id} does not exist.  \n"
                 )
                 return
 
@@ -277,7 +277,7 @@ class Command:
 
         elif self.args[0].lower() == 'list':
             cursor.execute(
-                '''SELECT poll_id, question, choices FROM polls'''
+                '''SELECT poll_id, question, choices, active FROM polls'''
             )
             poll_list = cursor.fetchall()
 
@@ -290,9 +290,15 @@ class Command:
 
             text = ""
             for poll_detail in poll_list:
-                text += f"<b>Poll {poll_detail[0]}:</b>  \n"
+                text += f"Poll {poll_detail[0]}"
+                if poll_detail[3]: # if poll is active
+                    text += " (active)"
+                text +=  ":  \n"
                 text += f'&emsp;&ensp;"{poll_detail[1]}"  \n'
-                text += f'&emsp;&ensp;"{poll_detail[2]}"  \n\n'
+
+                options = poll_detail[2].split('/')
+                options = '/'.join(("`"+option+"`") for option in options)
+                text += f"&emsp;&ensp;{options}  \n\n"
 
             await send_text_to_room(self.client, self.room.room_id, text)
 
@@ -324,7 +330,7 @@ class Command:
             if not id_exist:
                 await send_text_to_room(
                     self.client, self.room.room_id,
-                    "Poll ID does not exist.  \n"
+                    f"Poll {poll_id} does not exist.  \n"
                 )
                 return
 
@@ -351,10 +357,13 @@ class Command:
             )
             active_poll = cursor.fetchall()
 
+            options = active_poll[0][1].split('/')
+            options = '/'.join(("`"+option+"`") for option in options)
+
             text = (
                 f"Active poll is now poll {poll_id}:  \n"
                 f'&emsp;&ensp;"{active_poll[0][0]}"  \n'
-                f'&emsp;&ensp;"{active_poll[0][1]}"  \n'
+                f"&emsp;&ensp;{options}  \n"
             )
             await send_text_to_room(self.client, self.room.room_id, text)
 
@@ -395,8 +404,8 @@ class Command:
         choices  = active_poll[2].split('/')
 
         if not self.args:
-            text  = f"You are voting on behalf of the {self.user.country} team.  \n\n"
-            text += f"Question: {question}  \n\n"
+            text  = f'Question: "{question}"  \n\n'
+            text += f"You are voting on behalf of the {self.user.country} team.  \n\n"
             text += "Vote by sending one of: \n\n"
             for choice in choices:
                 text += f"- `vote {choice}`  \n"
@@ -407,9 +416,10 @@ class Command:
             self.args = ' '.join(self.args)
 
             text = (
-                f"You voted `{self.args}` on behalf of the {self.user.country} team.  \n\n"
-                "Please wait for your vote to be displayed on the screen.  \n\n"
-                "You can change your vote by resending your vote.  \n"
+                f'Question: "{question}"  \n\n'
+                f"You voted `{self.args}` on behalf of the {self.user.country} team."
+                " Please wait for your vote to be displayed on the screen.  \n\n"
+                "You can amend your vote by resending your vote.  \n"
 
             )
             await send_text_to_room(self.client, self.room.room_id, text)
