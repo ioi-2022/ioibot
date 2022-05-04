@@ -180,7 +180,7 @@ class Command:
         response += "  \n  \nContestants:"
         for index, row in self.store.contestants.iterrows():
             if row['ContestantCode'].startswith(teamcode):
-                response += f"  \n- {row['ContestantCode']} ({row['FirstName']} {row['LastName']})"
+                response += f"  \n- `{row['ContestantCode']}` ({row['FirstName']} {row['LastName']})"
 
         await send_text_to_room(self.client, self.room.room_id, response)
 
