@@ -70,7 +70,7 @@ async def send_text_to_room(
         logger.exception(f"Unable to send message response to {room_id}")
 
 
-def make_pill(user_id: str, homeserver_url:str, displayname: str = None) -> str:
+def make_pill(user_id: str, homeserver_url: str, displayname: str = None) -> str:
     """Convert a user ID (and optionally a display name) to a formatted user 'pill'
 
     Args:
