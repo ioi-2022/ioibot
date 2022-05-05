@@ -466,20 +466,28 @@ class Command:
         list_room = list_room_response.rooms
 
         if not self.args[0].startswith('"') or not self.args[-2].endswith('"'):
-            await send_text_to_room(self.client, self.room.room_id, "Incorrect command format!")
+            await send_text_to_room(
+                self.client, self.room.room_id,
+                "Incorrect command format!"
+            )
             return
 
         if self.args[-1] not in list_room:
-            await send_text_to_room(self.client, self.room.room_id, "Room was not found!")
+            await send_text_to_room(
+                self.client, self.room.room_id,
+                "Room was not found!"
+            )
             return
-
 
         roles = ' '.join(self.args[0:-1])
         roles = roles[1:-1].split(",")
 
         for role in roles:
             if role.startswith(' ') or role.endswith(' '):
-                await send_text_to_room(self.client, self.room.room_id, "Incorrect command format!")
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    "Incorrect command format!"
+                )
                 return
 
         for index in range(len(roles)):
