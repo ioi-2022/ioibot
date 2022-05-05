@@ -96,7 +96,15 @@ class Command:
                 return
 
             await self._vote()
+        elif self.command.startswith("invite"):
+            if user.role != 'HTC':
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    "Only HTC can use this command."
+                )
+                return
 
+            await self.invite()
         else:
             await self._unknown_command()
 
@@ -441,6 +449,50 @@ class Command:
                 text += f"- `vote {choice}`  \n"
 
             await send_text_to_room(self.client, self.room.room_id, text)
+
+    async def invite(self):
+        """Invite all accounts with role to room"""
+        if not self.args:
+            text = (
+                "Usage:"
+                "  \n`invite \"<role1,role2,role3>\" <room id>`: Invite all accounts with role to room"
+                "  \n  \nExamples:"
+                "  \n- `invite \"Leader,Deputy Leader,ISC\" !egvUrNsxzCYFUtUmEJ:matrix.ioi2022.id`"
+            )
+            await send_text_to_room(self.client, self.room.room_id, text)
+            return
+
+        list_room_response = await self.client.joined_rooms()
+        list_room = list_room_response.rooms
+
+        if not self.args[0].startswith('"') or not self.args[-2].endswith('"'):
+            await send_text_to_room(self.client, self.room.room_id, "Incorrect command format!")
+            return
+
+        if self.args[-1] not in list_room:
+            await send_text_to_room(self.client, self.room.room_id, "Room was not found!")
+            return
+
+
+        roles = ' '.join(self.args[0:-1])
+        roles = roles[1:-1].split(",")
+
+        for role in roles:
+            if role.startswith(' ') or role.endswith(' '):
+                await send_text_to_room(self.client, self.room.room_id, "Incorrect command format!")
+                return
+
+        for index in range(len(roles)):
+            roles[index] = roles[index].lower()
+
+        for index, acc in self.store.leaders.iterrows():
+            if acc['Role'].lower() in roles:
+                await self.client.room_invite(
+                    self.args[-1],
+                    f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
+                )
+
+        await send_text_to_room(self.client, self.room.room_id, "Successfully invited!")
 
     async def _unknown_command(self):
         await send_text_to_room(
