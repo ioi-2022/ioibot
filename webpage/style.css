@@ -1,0 +1,57 @@
+body {
+    color: white;
+    background-color: #27262d;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    margin: 0;
+    padding: 20px 40px;
+}
+
+#result {
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+}
+
+/* List of Vote Count */
+.voteCategory {
+    position: absolute;
+    bottom: 20px;
+    margin: 0;
+    width: 90%;
+    justify-content: center;
+}
+
+.voteName{
+    height: 40px;
+}
+
+.voteIcon {
+    height: 40px;
+}
+
+.media-body {
+    height: 40px;
+    padding: 5px 50px;
+    border-radius: 6px;
+    align-items: center;
+    font-weight: bold;
+}
+
+#yesBody {
+    background-color: #00ff45;    
+}
+
+#noBody {
+    background-color: #ff004a;
+}
+
+#abstainBody {
+    color: black;
+    background-color: #e3fb1c;
+}
