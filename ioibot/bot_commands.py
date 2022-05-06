@@ -455,48 +455,39 @@ class Command:
         if not self.args:
             text = (
                 "Usage:"
-                "  \n`invite \"<role1,role2,role3>\" <room id>`: Invite all accounts with role to room"
+                "  \n`invite <room id> <role1,role2,role3>`: Invite all accounts with role to room"
                 "  \n  \nExamples:"
-                "  \n- `invite \"Leader,Deputy Leader,ISC\" !egvUrNsxzCYFUtUmEJ:matrix.ioi2022.id`"
+                "  \n- `invite !egvUrNsxzCYFUtUmEJ:matrix.ioi2022.id Leader,Deputy Leader,ISC`"
+                "  \n- `invite !egvUrNsxzCYFUtUmEJ:matrix.ioi2022.id all`"
             )
             await send_text_to_room(self.client, self.room.room_id, text)
             return
 
-        list_room_response = await self.client.joined_rooms()
-        list_room = list_room_response.rooms
+        joined_rooms = await self.client.joined_rooms()
+        rooms = joined_rooms.rooms
 
-        if not self.args[0].startswith('"') or not self.args[-2].endswith('"'):
-            await send_text_to_room(
-                self.client, self.room.room_id,
-                "Incorrect command format!"
-            )
-            return
-
-        if self.args[-1] not in list_room:
+        if self.args[0] not in rooms:
             await send_text_to_room(
                 self.client, self.room.room_id,
                 "Room was not found!"
             )
             return
 
-        roles = ' '.join(self.args[0:-1])
-        roles = roles[1:-1].split(",")
-
-        for role in roles:
-            if role.startswith(' ') or role.endswith(' '):
-                await send_text_to_room(
-                    self.client, self.room.room_id,
-                    "Incorrect command format!"
-                )
-                return
+        roles = ' '.join(self.args[1:])
+        roles = roles.split(",")
 
         for index in range(len(roles)):
+            roles[index] = roles[index].strip()
             roles[index] = roles[index].lower()
 
+        invite_all = False
+        if "all" in roles:
+            invite_all = True
+
         for index, acc in self.store.leaders.iterrows():
-            if acc['Role'].lower() in roles:
+            if acc['Role'].lower() in roles or invite_all:
                 await self.client.room_invite(
-                    self.args[-1],
+                    self.args[0],
                     f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
                 )
 
