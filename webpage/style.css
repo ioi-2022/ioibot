@@ -1,49 +1,81 @@
 * {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 body {
     color: white;
-    background-color: #27262d;
-    width: 100%;
+    background-color: #1f1f24;
+    width: 100vw;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
 h1 {
-    font-size: 30px;
+    font-size: 40px;
     font-weight: 800;
 }
 
-h5 {
+h4 {
+    font-size: 25px;
+    font-weight: 800;
+}
+
+span {
     font-size: 16px;
-    margin: 0;
+    font-weight: 500;
 }
 
-.container {
-    width: 100%;
+.container-fluid {
     margin: 0;
-    padding: 20px 40px;
+    padding: 20px 0px !important;
 }
 
+.row {
+    margin-left: 40px;
+}
+
+#datetime {
+    margin-bottom: 50px;   
+}
+
+#currDateTime {
+    padding: 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+#question {
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* vote result of countries */
 #result {
-    column-count: 8;
-    column-width: 200px;
+    justify-content: center;
+    margin-left: 40px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+}
+
+.country {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .countryVote {
     margin: 1px 0;
+    margin-right: 5px;
 }
 
 .choice {
     height: 16px;
     width: 16px;
-}
-
-.country {
-    padding: 0;
+    margin-right: 3px !important;
 }
 
 /* List of Vote Count */
@@ -51,14 +83,14 @@ h5 {
     position: absolute;
     bottom: 20px;
     margin: 0;
-    width: 90%;
-    justify-content: center;
+    width: 100%;
+    justify-content: space-around;
 }
 
 .voteName{
     height: 40px;
-    margin-right: 40px;
-    padding: 0;
+    margin: 0 20px;
+    padding: 0 !important;
 }
 
 .voteIcon {
@@ -69,12 +101,13 @@ h5 {
     height: 40px;
     padding: 5px 50px;
     border-radius: 6px;
+    text-align: center;
     align-items: center;
-    font-weight: bold;
+    justify-content: center;
 }
 
 #yesDesc {
-    background-color: #00ff45;    
+    background-color: #3bc325;    
 }
 
 #noDesc {

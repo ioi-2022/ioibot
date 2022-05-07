@@ -20,22 +20,21 @@
     </head>
 
     <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md" id="currentDate"></div>
-                <div class="col-md" id="currentTime"></div>
+        <div class="container-fluid">
+            <div class="row" id="datetime">
+                <div class="col-md" id="currDateTime"></div>
             </div>
 
-            <h1 id="question"> No poll is currently active. </h1>
+            <h1 class="row" id="question"> No poll is currently active. </h1>
 
             <div id="result">
                 <!--
-                Repeat this pattern for all countries
+                This pattern will be repeated for all countries
 
                 <div class="media countryVote">
                     <img class="align-self-center mr-3 choice" src="[link]">
                     <div class="align-self-center media-body country">
-                        <h5>Country_Name</h5>
+                        <span>Country_Name</span>
                     </div>
                 </div>
                 -->

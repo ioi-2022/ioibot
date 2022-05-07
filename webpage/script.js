@@ -19,7 +19,7 @@ function refreshPoll(data) {
 		"yes"     : "./webpage/asset/yes.png",
 		"no"      : "./webpage/asset/no.png",
 		"abstain" : "./webpage/asset/abstain.png",
-		"none"    : "./webpage/asset/abstain.png"
+		"none"    : "./webpage/asset/empty.png"
 	};
 
 	var column = 10;
@@ -33,11 +33,9 @@ function refreshPoll(data) {
 		var img = '<img class="align-self-center mr-3 choice" src="' + 
 		           imgLink[data.votes[key]] + '">';
 
-		// shorten country name when the length exceeds a limit
-		key = key.toUpperCase();
-		var countryName = (key.length > 20 ? key.substring(0, 17) + "..." : key)
-		var country = '<div class="align-self-center media-body country"><h5>' 
-		              + countryName + '</h5></div>';
+		key = key.toUpperCase()
+		var country = '<div class="align-self-center media-body country"><span>' 
+		              + key + '</span></div>';
 
 		var $countryVote = $('<div class="media countryVote"></div>');
 		$countryVote.append(img);
@@ -75,8 +73,7 @@ function refreshCounter(data) {
 }
 
 function fetchDateTime() {
-	$("#currentDate").html(getDate());
-	$("#currentTime").html(getTime());
+	$("#currDateTime").html("Local Time: " + getDate() + " " + getTime());
 
 	setTimeout(function() {
 		fetchDateTime();
