@@ -7,13 +7,13 @@ function fetchPollResult() {
 
 		setTimeout(function () {
 			fetchPollResult(data);
-		}, 5000); //config.refreshInternalInMs);
+		}, 60000); //config.refreshInternalInMs);
 	});
 }
 
 function refreshPoll(data) {
-	$(".countryVote").remove()
-	$("#question").html(data.question)
+	$(".countryVote").remove();
+	$("#question").html(data.question);
 	
 	const imgLink = {
 		"yes"     : "./webpage/asset/yes.png",
@@ -30,14 +30,19 @@ function refreshPoll(data) {
 			continue;
 		}
 
-		var img = '<img class="align-self-center mr-3" src="' + imgLink[data.votes[key]] + '" width="30px" height="30px">'
-		var country = '<div class="align-self-center media-body"><h3>' + key + '</h3></div>'
+		var img = '<img class="align-self-center mr-3 choice" src="' + 
+		           imgLink[data.votes[key]] + '">';
+
+		// shorten country name when the length exceeds a limit
+		key = key.toUpperCase();
+		var countryName = (key.length > 20 ? key.substring(0, 17) + "..." : key)
+		var country = '<div class="align-self-center media-body country"><h5>' 
+		              + countryName + '</h5></div>';
 
 		var $countryVote = $('<div class="media countryVote"></div>');
-		$countryVote.append(img)
+		$countryVote.append(img);
 		$countryVote.append(country)
 		$result.append($countryVote);
-		
 	}
 }
 
@@ -79,15 +84,22 @@ function fetchDateTime() {
 }
 
 function getDate() {
+	const month = ["January", "February", "March", "April", "May", "June", "July",
+				   "August", "September", "October", "November", "December"];
+
 	var today = new Date();
-	return today.getDate() + '-' 
-	       + (today.getMonth() + 1) + '-'
-		   + today.getYear();
+	return today.getDate() + ' ' 
+	       + month[today.getMonth()] + ' '
+		   + today.getFullYear();
+}
+
+function pad(num) {
+	return (num < 10 ? "0" + num : num);
 }
 
 function getTime() {
 	var time = new Date();
-	return time.getHours() + ':'
-	       + time.getMinutes() + ':'
-		   + time.getSeconds();
+	return pad(time.getHours()) + ':'
+	       + pad(time.getMinutes()) + ':'
+		   + pad(time.getSeconds());
 }

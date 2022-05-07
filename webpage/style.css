@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     color: white;
     background-color: #27262d;
@@ -7,6 +12,16 @@ body {
     box-sizing: border-box;
 }
 
+h1 {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+h5 {
+    font-size: 16px;
+    margin: 0;
+}
+
 .container {
     width: 100%;
     margin: 0;
@@ -14,8 +29,21 @@ body {
 }
 
 #result {
-    display: grid;
-    grid-template-columns: repeat(10, auto);
+    column-count: 8;
+    column-width: 200px;
+}
+
+.countryVote {
+    margin: 1px 0;
+}
+
+.choice {
+    height: 16px;
+    width: 16px;
+}
+
+.country {
+    padding: 0;
 }
 
 /* List of Vote Count */
@@ -29,13 +57,15 @@ body {
 
 .voteName{
     height: 40px;
+    margin-right: 40px;
+    padding: 0;
 }
 
 .voteIcon {
     height: 40px;
 }
 
-.media-body {
+.voteDesc {
     height: 40px;
     padding: 5px 50px;
     border-radius: 6px;
@@ -43,15 +73,15 @@ body {
     font-weight: bold;
 }
 
-#yesBody {
+#yesDesc {
     background-color: #00ff45;    
 }
 
-#noBody {
+#noDesc {
     background-color: #ff004a;
 }
 
-#abstainBody {
+#absDesc {
     color: black;
     background-color: #e3fb1c;
 }

@@ -29,30 +29,40 @@
             <h1 id="question"> No poll is currently active. </h1>
 
             <div id="result">
+                <!--
+                Repeat this pattern for all countries
+
+                <div class="media countryVote">
+                    <img class="align-self-center mr-3 choice" src="[link]">
+                    <div class="align-self-center media-body country">
+                        <h5>Country_Name</h5>
+                    </div>
+                </div>
+                -->
             </div>
 
             <div class="row voteCategory">
                 <div class="col-sm voteName">
                     <div class="media">
                         <img class="align-self-center mr-3 voteIcon" src="./webpage/asset/yes.png">
-                        <div class="media-body align-self-center" id="yesBody">
-                            <h4 class="align-self-center mt-0" id="yesCount">In Favour</h4>
+                        <div class="media-body align-self-center voteDesc" id="yesDesc">
+                            <h4 class="align-self-center mt-0" id="yesCount">In Favour : 0</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm voteName">
                     <div class="media">
                         <img class="align-self-center mr-3 voteIcon" src="./webpage/asset/no.png">
-                        <div class="media-body align-self-center" id="noBody">
-                            <h4 class="align-self-center mt-0" id="noCount">Against</h4>
+                        <div class="media-body align-self-center voteDesc" id="noDesc">
+                            <h4 class="align-self-center mt-0" id="noCount">Against : 0</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm voteName">
                     <div class="media">
                         <img class="align-self-center mr-3 voteIcon" src="./webpage/asset/abstain.png">
-                        <div class="media-body align-self-center" id="abstainBody">
-                            <h4 class="align-self-center mt-0" id="abstainCount">Abstention</h4>
+                        <div class="media-body align-self-center voteDesc" id="absDesc">
+                            <h4 class="align-self-center mt-0" id="abstainCount">Abstention : 0</h4>
                         </div>
                     </div>
                 </div>
