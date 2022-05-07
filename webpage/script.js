@@ -1,13 +1,11 @@
 function fetchPollResult() {
-	// note: link should be in config
-	// i'll find out later about this
 	$.get("http://localhost:9000/polls/active", function(data) {
 		refreshPoll(data);
 		refreshCounter(data);
 
 		setTimeout(function () {
 			fetchPollResult(data);
-		}, 60000); //config.refreshInternalInMs);
+		}, 60000); 
 	});
 }
 
@@ -66,37 +64,30 @@ function refreshCounter(data) {
 		counter[data.votes[key]]++;
 	}
 
+	var yesPerc = 0;
+	var noPerc = 0;
+	if(counter["yes"] + counter["no"] > 0) {
+		yesPerc = 100 * counter["yes"] / (counter["yes"] + counter["no"]);
+		noPerc = 100 - yesPerc;
+
+		yesPerc = yesPerc.toFixed(2);
+		noPerc = noPerc.toFixed(2);
+	}
+
 	for(var key in counter) {
 		var elementID = `#${key}Count`;
-		$(elementID).html(`${statement[key]} : ${counter[key]}`);
+		var text = `${statement[key]} : ${counter[key]}`;
+		if(key == "yes") {
+			text += ` (${yesPerc}%)`
+		}
+		else if(key == "no") {
+			text += ` (${noPerc}%)`
+		}
+
+		$(elementID).html(text);
 	}
 }
 
-function fetchDateTime() {
-	$("#currDateTime").html("Local Time: " + getDate() + " " + getTime());
-
-	setTimeout(function() {
-		fetchDateTime();
-	}, 1000);
-}
-
-function getDate() {
-	const month = ["January", "February", "March", "April", "May", "June", "July",
-				   "August", "September", "October", "November", "December"];
-
-	var today = new Date();
-	return today.getDate() + ' ' 
-	       + month[today.getMonth()] + ' '
-		   + today.getFullYear();
-}
-
-function pad(num) {
-	return (num < 10 ? "0" + num : num);
-}
-
-function getTime() {
-	var time = new Date();
-	return pad(time.getHours()) + ':'
-	       + pad(time.getMinutes()) + ':'
-		   + pad(time.getSeconds());
+function roundDec(num, dec) {
+	return Number(Math.round(num + "e" + dec) + "e-" + dec)
 }

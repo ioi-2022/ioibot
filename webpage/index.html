@@ -12,17 +12,13 @@
             $(document).ready(function() {
                 fetchPollResult();
             });
-
-            $(document).ready(function() {
-                fetchDateTime();
-            })
         </script>
     </head>
 
     <body>
         <div class="container-fluid">
-            <div class="row" id="datetime">
-                <div class="col-md" id="currDateTime"></div>
+            <div class="row" id="header">
+                <img id="ioiLogo" src="./webpage/asset/ioi_logo.png">
             </div>
 
             <h1 class="row" id="question"> No poll is currently active. </h1>
@@ -40,7 +36,7 @@
                 -->
             </div>
 
-            <div class="row voteCategory">
+            <div class="row" id="voteCategory">
                 <div class="col-sm voteName">
                     <div class="media">
                         <img class="align-self-center mr-3 voteIcon" src="./webpage/asset/yes.png">
