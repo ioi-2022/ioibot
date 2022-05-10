@@ -18,6 +18,11 @@ h1 {
     font-weight: 800;
 }
 
+h3 {
+    font-size: 30px;
+    font-weight: 800;
+}
+
 h4 {
     font-size: 25px;
     font-weight: 800;
@@ -46,16 +51,23 @@ span {
     height: 60px;
 }
 
+/* guide */
+#guide {
+    position: fixed;
+    bottom: 120px;
+    text-align: center;
+    width: calc(100% - 80px);
+}
+
 /* question */
 #question {
-    justify-content: center;
     margin-bottom: 30px !important;
 }
 
 /* vote result of countries */
 #result {
     justify-content: center;
-    margin-left: 40px;
+    margin: 0 40px;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -102,8 +114,6 @@ span {
     padding: 5px 50px;
     border-radius: 6px;
     text-align: center;
-    align-items: center;
-    justify-content: center;
 }
 
 #yesDesc {

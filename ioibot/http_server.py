@@ -53,7 +53,7 @@ async def create_app():
 				if team['Code'] in vote_result:
 					votes[team['Name']] = vote_result[team['Code']]
 				else:
-					votes[team['Name']] = "none"
+					votes[team['Name']] = None
 
 			result['votes'] = votes	
 			return web.json_response(result)
@@ -93,7 +93,7 @@ async def create_app():
 				if team['Code'] in vote_result:
 					votes[team['Name']] = vote_result[team['Code']]
 				else:
-					votes[team['Name']] = "none"
+					votes[team['Name']] = None
 
 			result['votes'] = votes	
 			return web.json_response(result)

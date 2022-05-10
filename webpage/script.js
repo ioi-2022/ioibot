@@ -5,19 +5,26 @@ function fetchPollResult() {
 
 		setTimeout(function () {
 			fetchPollResult(data);
-		}, 60000); 
+		}, 10000); 
 	});
 }
 
 function refreshPoll(data) {
 	$(".countryVote").remove();
+	$("#guide").empty();
+	if(Object.keys(data).length === 0) {
+		$("#question").html("No poll is currently active.")
+		return;
+	}
+
 	$("#question").html(data.question);
-	
+	$("#guide").html('Cast your vote by sending "vote" to @ioibot');
+
 	const imgLink = {
 		"yes"     : "./webpage/asset/yes.png",
 		"no"      : "./webpage/asset/no.png",
 		"abstain" : "./webpage/asset/abstain.png",
-		"none"    : "./webpage/asset/empty.png"
+		null      : "./webpage/asset/empty.png"
 	};
 
 	var column = 10;
@@ -47,14 +54,14 @@ function refreshCounter(data) {
 		"yes"     : 0,
 		"no"      : 0,
 		"abstain" : 0,
-		"none"	  : 0
+		null	  : 0
 	};
 
 	statement = {
 		"yes"     : "In Favour",
 		"no"      : "Against",
 		"abstain" : "Abstention",
-		"none"    : "none"
+		null      : "none"
 	};
 
 	for(var key in data.votes) {
