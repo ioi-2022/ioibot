@@ -1,11 +1,11 @@
 function fetchPollResult() {
-	$.get("http://localhost:9000/polls/active", function(data) {
+	$.get("./polls/active", function(data) {
 		refreshPoll(data);
 		refreshCounter(data);
 
 		setTimeout(function () {
 			fetchPollResult(data);
-		}, 10000); 
+		}, 3000); 
 	});
 }
 
@@ -58,9 +58,9 @@ function refreshCounter(data) {
 	};
 
 	statement = {
-		"yes"     : "In Favour",
-		"no"      : "Against",
-		"abstain" : "Abstention",
+		"yes"     : "Yes",
+		"no"      : "No",
+		"abstain" : "Abstain",
 		null      : "none"
 	};
 

@@ -88,7 +88,7 @@ class Command:
             await self._manage_poll()
 
         elif self.command.startswith("vote"):
-            if user.role not in ['Leader', 'Deputy Leader', 'HTC']:
+            if user.role not in ['Leader', 'Deputy Leader']:
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only Leader and Deputy Leader can use this command."
