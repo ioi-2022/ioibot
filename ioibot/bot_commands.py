@@ -64,6 +64,13 @@ class Command:
         user = User(self.store, self.config, self.event.sender)
         self.user = user
 
+        if self.user.role == "Unknown":
+            await send_text_to_room(
+                self.client, self.room.room_id,
+                "You are not authorized to use this bot."
+            )
+            return
+
         """Process the command"""
         if self.command.startswith("echo"):
             await self._echo()
@@ -105,6 +112,17 @@ class Command:
                 return
 
             await self.invite()
+
+        elif self.command.startswith("accounts"):
+            if user.role not in ['Leader', 'Deputy Leader', 'HTC']:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    "Only Leader and Deputy Leader can use this command."
+                )
+                return
+
+            await self._show_accounts()
+
         else:
             await self._unknown_command()
 
@@ -492,6 +510,68 @@ class Command:
                 )
 
         await send_text_to_room(self.client, self.room.room_id, "Successfully invited!")
+
+    async def _show_accounts(self):
+        if not self.args:
+            text = (
+                "Usage:  \n"
+                "- `accounts contestants`: Show contestant accounts for practice/contest days (for online teams only)  \n"
+                "- `accounts translation`: Show team account for translation system  \n"
+                "- `accounts test`: Show test accounts for contestant VM  \n"
+            )
+            await send_text_to_room(self.client, self.room.room_id, text)
+            return
+
+        teams = self.store.teams
+        team_code = self.user.team
+        team_country = self.user.country
+
+        if self.args[0].lower() == 'contestants':
+            is_online = teams.loc[teams['Code'] == team_code, 'Online'].item()
+            if is_online == 0:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    f"Team {team_code} ({team_country}) is participating on-site. We do not distribute contestant accounts for on-site teams."
+                )
+                return
+
+            contestants = self.store.contestants
+            accounts = contestants.loc[contestants['ContestantCode'].str.startswith(team_code)]
+
+            text = f"Contestant accounts (`username: password`) for team {team_code} ({team_country}):  \n\n"
+            for index, account in accounts.iterrows():
+                text += f"- `{account['ContestantCode']}` ({account['FirstName']} {account['LastName']}): `{account['Password']}`  \n"
+
+            text += "\n\n These accounts are to be used for practice and contest days. Please ensure that each contestant receives the correct account."
+
+            await send_text_to_room(self.client, self.room.room_id, text)
+
+
+        elif self.args[0].lower() == 'translation':
+            translation = self.store.translation_acc
+            account = translation[translation['TeamCode'] == team_code]
+
+            text  = f"Translation account (`username: password`) for team {team_code} ({team_country}): \n\n"
+            text += f"`{team_code}`: `{account.iat[0, 1]}` \n\n"
+
+            await send_text_to_room(self.client, self.room.room_id, text)
+
+        elif self.args[0].lower() == 'test':
+            testing = self.store.testing_acc
+            accounts = testing[testing['TeamCode'] == team_code]
+
+            text = f"Test accounts (`username: password`) for team {team_code} ({team_country}): \n\n"
+            for index, account in accounts.iterrows():
+                text += f"- `{account['ContestantCode']}`: `{account['Password']}`  \n"
+            text += "\n\n These accounts are for testing only, and NOT tied to any particular contestants."
+
+            await send_text_to_room(self.client, self.room.room_id, text)
+
+        else:
+            await send_text_to_room(
+                self.client, self.room.room_id,
+                "Command format is invalid. Send `accounts` to see all commands."
+            )
 
     async def _unknown_command(self):
         await send_text_to_room(
