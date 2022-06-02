@@ -18,10 +18,16 @@ class User():
 
         if not user.empty:
             country = teams.loc[teams['Code'] == user.iat[0, 0], ['Name']]
-            self.team = user.iat[0, 0]
-            self.name = user.iat[0, 1]
-            self.role = user.iat[0, 2]
-            self.country = country.iat[0, 0]
+            # if the user is not specified in the spreadsheet,
+            # or if the country code is not found,
+            # assume that the user is unauthorized to use this bot.
+            if country.empty:
+                self.role = "Unknown"
+            else:
+                self.team = user.iat[0, 0]
+                self.name = user.iat[0, 1]
+                self.role = user.iat[0, 2]
+                self.country = country.iat[0, 0]
 
     def _get_username(self, name):
         homeserver = self.config.homeserver_url[8:]
@@ -67,7 +73,7 @@ class Command:
         if self.user.role == "Unknown":
             await send_text_to_room(
                 self.client, self.room.room_id,
-                "You are not authorized to use this bot."
+                "You are not authorized to use this bot. Please contact HTC for details."
             )
             return
 
@@ -514,7 +520,7 @@ class Command:
     async def _show_accounts(self):
         if not self.args:
             text = (
-                "Usage:  \n"
+                "Usage:  \n\n"
                 "- `accounts contestants`: Show contestant accounts for practice/contest days (for online teams only)  \n"
                 "- `accounts translation`: Show team account for translation system  \n"
                 "- `accounts test`: Show test accounts for contestant VM  \n"
@@ -528,6 +534,7 @@ class Command:
 
         if self.args[0].lower() == 'contestants':
             is_online = teams.loc[teams['Code'] == team_code, 'Online'].item()
+
             if is_online == 0:
                 await send_text_to_room(
                     self.client, self.room.room_id,
@@ -537,6 +544,13 @@ class Command:
 
             contestants = self.store.contestants
             accounts = contestants.loc[contestants['ContestantCode'].str.startswith(team_code)]
+
+            if accounts.empty:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    f"No contestant accounts available for team {team_code} ({team_country}). Please contact HTC for details."
+                )
+                return
 
             text = f"Contestant accounts (`username: password`) for team {team_code} ({team_country}):  \n\n"
             for index, account in accounts.iterrows():
@@ -549,7 +563,14 @@ class Command:
 
         elif self.args[0].lower() == 'translation':
             translation = self.store.translation_acc
-            account = translation[translation['TeamCode'] == team_code]
+            account = translation.loc[translation['TeamCode'] == team_code]
+
+            if account.empty:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    f"No translation account available for team {team_code} ({team_country}). Please contact HTC for details."
+                )
+                return
 
             text  = f"Translation account (`username: password`) for team {team_code} ({team_country}): \n\n"
             text += f"`{team_code}`: `{account.iat[0, 1]}` \n\n"
@@ -558,7 +579,14 @@ class Command:
 
         elif self.args[0].lower() == 'test':
             testing = self.store.testing_acc
-            accounts = testing[testing['TeamCode'] == team_code]
+            accounts = testing.loc[testing['TeamCode'] == team_code]
+
+            if accounts.empty:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    f"No testing accounts available for team {team_code} ({team_country}). Please contact HTC for details."
+                )
+                return
 
             text = f"Test accounts (`username: password`) for team {team_code} ({team_country}): \n\n"
             for index, account in accounts.iterrows():
