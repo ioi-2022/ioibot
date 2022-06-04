@@ -162,7 +162,7 @@ class Command:
         teams = self.store.teams
         leaders = self.store.leaders
 
-        if self.args[0].upper() in ['IC', 'SC', 'TC']:
+        if teamcode in ['IC', 'SC', 'TC']:
             rolecode = teamcode
             roles = set()
             response = ""
@@ -171,11 +171,8 @@ class Command:
                 if row['Role'].endswith(rolecode):
                     roles.add(row['Role'])
 
-            first = True
-            for role in roles:
-                if first == True:
-                    first = False
-                else:
+            for idx, role in enumerate(roles):
+                if idx > 0:
                     response += "  \n  \n"
                 response += f"{role} members:"
                 for index, member in leaders.iterrows():
