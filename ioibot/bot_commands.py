@@ -14,7 +14,7 @@ class User():
         teams = store.teams
 
         user = users.loc[self._get_username(users['UserID']) == username, \
-                        ['TeamCode', 'Name', 'Role', 'UserID']]
+                        ['TeamCode', 'RealTeamCode', 'Name', 'Role', 'UserID']]
 
         if not user.empty:
             country = teams.loc[teams['Code'] == user.iat[0, 0], ['Name']]
@@ -25,8 +25,9 @@ class User():
                 self.role = "Unknown"
             else:
                 self.team = user.iat[0, 0]
-                self.name = user.iat[0, 1]
-                self.role = user.iat[0, 2]
+                self.real_team = user.iat[0, 1]
+                self.name = user.iat[0, 2]
+                self.role = user.iat[0, 3]
                 self.country = country.iat[0, 0]
 
     def _get_username(self, name):
@@ -101,16 +102,23 @@ class Command:
             await self._manage_poll()
 
         elif self.command.startswith("vote"):
-            if user.role not in ['Leader', 'Deputy Leader']:
+            if self.user.role not in ['Leader', 'Deputy Leader']:
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only Leader and Deputy Leader can use this command."
                 )
                 return
 
+            if self.user.team == "IOI":
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    "Sorry, you are not allowed to vote."
+                )
+                return
+
             await self._vote()
         elif self.command.startswith("invite"):
-            if user.role != 'HTC':
+            if self.user.role != 'HTC':
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only HTC can use this command."
@@ -120,7 +128,7 @@ class Command:
             await self.invite()
 
         elif self.command.startswith("accounts"):
-            if user.role not in ['Leader', 'Deputy Leader']:
+            if self.user.role not in ['Leader', 'Deputy Leader']:
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only Leader and Deputy Leader can use this command."
@@ -565,15 +573,16 @@ class Command:
 
             contestants = self.store.contestants
             accounts = contestants.loc[contestants['ContestantCode'].str.startswith(team_code)]
+            real_team_code = self.user.real_team
 
             if accounts.empty:
                 await send_text_to_room(
                     self.client, self.room.room_id,
-                    f"No contestant accounts available for team {team_code} ({team_country}). Please contact HTC for details."
+                    f"No contestant accounts available for team {real_team_code} ({team_country}). Please contact HTC for details."
                 )
                 return
 
-            text = f"Contestant accounts (`username: password`) for team {team_code} ({team_country}):  \n\n"
+            text = f"Contestant accounts (`username: password`) for team {real_team_code} ({team_country}):  \n\n"
             for index, account in accounts.iterrows():
                 text += f"- `{account['ContestantCode']}` ({account['FirstName']} {account['LastName']}): `{account['Password']}`  \n"
 
@@ -600,7 +609,8 @@ class Command:
 
         elif self.args[0].lower() == 'test':
             testing = self.store.testing_acc
-            accounts = testing.loc[testing['TeamCode'] == team_code]
+            real_team_code = self.user.real_team
+            accounts = testing.loc[testing['RealTeamCode'] == real_team_code]
 
             if accounts.empty:
                 await send_text_to_room(
@@ -609,7 +619,7 @@ class Command:
                 )
                 return
 
-            text = f"Test accounts (`username: password`) for team {team_code} ({team_country}): \n\n"
+            text = f"Test accounts (`username: password`) for team {real_team_code} ({team_country}): \n\n"
             for index, account in accounts.iterrows():
                 text += f"- `{account['ContestantCode']}`: `{account['Password']}`  \n"
             text += "\n\n These accounts are for testing only, and NOT tied to any particular contestants."
