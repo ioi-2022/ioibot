@@ -573,7 +573,7 @@ class Command:
 
             contestants = self.store.contestants
             real_team_code = self.user.real_team
-            accounts = contestants.loc[contestants['RealTeamCode'].str.startswith(real_team_code)]
+            accounts = contestants.loc[contestants['RealTeamCode'] == real_team_code]
 
             if accounts.empty:
                 await send_text_to_room(
