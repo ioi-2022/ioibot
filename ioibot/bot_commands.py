@@ -572,17 +572,17 @@ class Command:
                 return
 
             contestants = self.store.contestants
-            accounts = contestants.loc[contestants['ContestantCode'].str.startswith(team_code)]
             real_team_code = self.user.real_team
+            accounts = contestants.loc[contestants['RealTeamCode'].str.startswith(real_team_code)]
 
             if accounts.empty:
                 await send_text_to_room(
                     self.client, self.room.room_id,
-                    f"No contestant accounts available for team {real_team_code} ({team_country}). Please contact HTC for details."
+                    f"No contestant accounts available for team {team_code} ({team_country}). Please contact HTC for details."
                 )
                 return
 
-            text = f"Contestant accounts (`username: password`) for team {real_team_code} ({team_country}):  \n\n"
+            text = f"Contestant accounts (`username: password`) for team {team_code} ({team_country}):  \n\n"
             for index, account in accounts.iterrows():
                 text += f"- `{account['ContestantCode']}` ({account['FirstName']} {account['LastName']}): `{account['Password']}`  \n"
 
@@ -619,7 +619,7 @@ class Command:
                 )
                 return
 
-            text = f"Test accounts (`username: password`) for team {real_team_code} ({team_country}): \n\n"
+            text = f"Test accounts (`username: password`) for team {team_code} ({team_country}): \n\n"
             for index, account in accounts.iterrows():
                 text += f"- `{account['ContestantCode']}`: `{account['Password']}`  \n"
             text += "\n\n These accounts are for testing only, and NOT tied to any particular contestants."
