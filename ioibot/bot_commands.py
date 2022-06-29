@@ -568,8 +568,8 @@ class Command:
 
             if accounts.empty:
                 await send_text_to_room(
-                self.client, self.room.room_id,
-                f"No contestant accounts available for team {team_code} ({team_country}). Please contact HTC for details."
+                    self.client, self.room.room_id,
+                    f"No contestant accounts available for team {team_code} ({team_country}). Please contact HTC for details."
                 )
                 return
 
