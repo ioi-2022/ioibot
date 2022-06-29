@@ -662,7 +662,7 @@ class Command:
         if url.empty:
             await send_text_to_room(
                 self.client, self.room.room_id,
-                f"No Dropbox file request link available for team {real_team_code} ({team_country}). Plase contact HTC for details."
+                f"No Dropbox file request link found for team {real_team_code} ({team_country}). Plase contact HTC for details."
             )
             return 
         url = url.values[0] 
