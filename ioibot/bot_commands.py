@@ -578,10 +578,7 @@ class Command:
             if online_accounts.empty:
                 text = f"All contestants of team {team_code} ({team_country}) are participating on-site."
                 text += " We do not distribute contestant accounts for on-site contestants."
-                await send_text_to_room(
-                self.client, self.room.room_id,
-                text
-                )
+                await send_text_to_room(self.client, self.room.room_id, text)
                 return
 
             text = f"Online contestant accounts (`username: password`) for team {team_code} ({team_country}):  \n\n"
