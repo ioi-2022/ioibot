@@ -647,6 +647,7 @@ class Command:
 
     async def _get_dropbox(self):
         dropbox_link = self.store.dropbox_url
+        team_code = self.user.team
         real_team_code = self.user.real_team
         team_country = self.user.country
 
@@ -662,12 +663,12 @@ class Command:
         if url.empty:
             await send_text_to_room(
                 self.client, self.room.room_id,
-                f"No Dropbox file request link found for team {real_team_code} ({team_country}). Plase contact HTC for details."
+                f"No Dropbox file request link found for team {team_code} ({team_country}). Plase contact HTC for details."
             )
             return 
         url = url.values[0] 
 
-        text = f"Dropbox upload link for Day {day} for team {real_team_code} ({team_country}):  \n\n"
+        text = f"Dropbox upload link for Day {day} for team {team_code} ({team_country}):  \n\n"
         text += url + "  \n\n"
 
         dbx = self.store.dbx
