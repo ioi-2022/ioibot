@@ -722,7 +722,6 @@ class Command:
 
     async def _get_token(self):
         tokens = self.store.tokens
-        print(tokens)
         token = tokens.loc[tokens['TeamCode'] == self.user.team]
 
         if token.empty:
