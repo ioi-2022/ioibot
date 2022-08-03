@@ -552,33 +552,62 @@ class Command:
             await send_text_to_room(self.client, self.room.room_id, text)
             return
 
-        joined_rooms = await self.client.joined_rooms()
-        rooms = joined_rooms.rooms
 
-        if self.args[0] not in rooms:
-            await send_text_to_room(
-                self.client, self.room.room_id,
-                "Room was not found!"
-            )
-            return
+        if self.args[0].lower() == 'translators':
 
-        roles = ' '.join(self.args[1:])
-        roles = roles.split(",")
+            for index, acc in self.store.leaders.iterrows():
+                if (acc['Matrix Exists'] == 'Y'
+                    and acc['Role'] != 'Guest'
+                    and acc['Role'] != 'Remote Adjunct (not on site)'
+                    and acc['Translating'] == 1
+                ):
+                    await self.client.room_invite(
+                        self.args[1],
+                        f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
+                    )
+        elif self.args[0].lower() == 'online':
+            online_countries = set()
+            for index, acc in self.store.contestants.iterrows():
+                if acc['Online'] == 1:
+                    online_countries.add(acc['RealTeamCode'])
 
-        for index in range(len(roles)):
-            roles[index] = roles[index].strip()
-            roles[index] = roles[index].lower()
+            leaders = self.store.leaders
+            for country in online_countries:
+                leader_accounts = leaders[leaders['RealTeamCode'] == country]
+                for index, acc in leader_accounts.iterrows():
+                    if acc['Matrix Exists'] == 'Y':
+                        await self.client.room_invite(
+                            self.args[1],
+                            f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
+                        )
+        else:
+            joined_rooms = await self.client.joined_rooms()
+            rooms = joined_rooms.rooms
 
-        invite_all = False
-        if "all" in roles:
-            invite_all = True
-
-        for index, acc in self.store.leaders.iterrows():
-            if acc['Role'].lower() in roles or invite_all:
-                await self.client.room_invite(
-                    self.args[0],
-                    f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
+            if self.args[0] not in rooms:
+                await send_text_to_room(
+                    self.client, self.room.room_id,
+                    "Room was not found!"
                 )
+                return
+
+            roles = ' '.join(self.args[1:])
+            roles = roles.split(",")
+
+            for index in range(len(roles)):
+                roles[index] = roles[index].strip()
+                roles[index] = roles[index].lower()
+
+            invite_all = False
+            if "all" in roles:
+                invite_all = True
+
+            for index, acc in self.store.leaders.iterrows():
+                if acc['Role'].lower() in roles or invite_all:
+                    await self.client.room_invite(
+                        self.args[0],
+                        f"@{acc['UserID']}:{self.config.homeserver_url[8:]}"
+                    )
 
         await send_text_to_room(self.client, self.room.room_id, "Successfully invited!")
 
@@ -688,8 +717,8 @@ class Command:
                 self.client, self.room.room_id,
                 f"No Dropbox file request link found for team {team_code} ({team_country}). Plase contact HTC for details."
             )
-            return 
-        url = url.values[0] 
+            return
+        url = url.values[0]
 
         text = f"Dropbox upload link for Day {day} for team {team_code} ({team_country}):  \n\n"
         text += url + "  \n\n"
