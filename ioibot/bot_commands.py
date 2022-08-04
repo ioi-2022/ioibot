@@ -128,7 +128,7 @@ class Command:
             await self._vote()
 
         elif self.command.startswith("invite"):
-            if self.user.role != 'HTC':
+            if not self.user.is_tc():
                 await send_text_to_room(
                     self.client, self.room.room_id,
                     "Only HTC can use this command."
