@@ -704,6 +704,7 @@ class Command:
             res = dbx.files_list_folder(f"/Uploads/Day {day}/{real_team_code}")
         except Exception as e:
             await send_text_to_room(self.client, self.room.room_id, "No upload folder found.")
+            return 
 
         if not res.entries:
             text += "The folder is empty. Please upload the required files through the link provided above."
